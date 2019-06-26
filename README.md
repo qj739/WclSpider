@@ -10,8 +10,12 @@ phantomjs 或Chrome headless
 
 ## 使用方法
 python wcl_spider <class>  <spec>  <is_hps>
-参数1：class职业名,如：Druid，Paladin ...
+
+参数1：class职业名,如：Druid，Paladin 
+
 参数2： spec 专精名 ,如： Restoration
+
 参数3:  0 --- DPS ，1 --- HPS
+
 
 
