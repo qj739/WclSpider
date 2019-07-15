@@ -13,6 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
+from boss import *
 #import xlwt
 #from xlwt import Workbook
 import cPickle as pickle
@@ -86,7 +87,7 @@ def set_style(wb, name, height, bold=False, align=None):
 
 def main():
     global attr_map
-    
+    global pic_map
     # all_class=[]
     # all_spec=[]
     try:
@@ -112,9 +113,9 @@ def main():
     try:
         f = Workbook(wow_class+'_'+wow_spec+'.xlsx')
         pagecnt = 0
-        for b in BossList:
+        for b in YongHengWangGong_BossList:
             if pagecnt < 10:
-                add_sheet(f, b["Name"], b["ID"], wow_class, wow_spec, bool(is_hps))
+                add_sheet(f, b["Name"], b["ID"], wow_class, wow_spec, bool(int(is_hps)))
             pagecnt += 1
 
     except Exception, e:
@@ -140,7 +141,7 @@ def add_sheet(f, bossName, bossID, wclass, spec, is_heal=False):
 
         sheet1 = f.add_worksheet(bossName.decode('utf-8'))
         row0 = ["排名", "名字", "装等", DpsColum, "日期", "时长",
-                "主属性", "暴击", "急速", "精通", "全能", "天赋", "特质", "饰品"]
+                "主属性", "暴击", "急速", "精通", "全能", "天赋", "特质", "饰品" , "精华"]
         # 0      1       2          3    4       5       6       7       8   9       10      11   12
         # 写第一行
         for i in range(0, len(row0)):
@@ -152,7 +153,7 @@ def add_sheet(f, bossName, bossID, wclass, spec, is_heal=False):
         # chrome_options.add_argument('--headless')
         #driver = webdriver.Chrome(chrome_options=chrome_options)
 
-        URL = "https://cn.warcraftlogs.com/zone/rankings/21#boss=%s&class=%s&spec=%s" % (
+        URL = "https://cn.warcraftlogs.com/zone/rankings/23#boss=%s&class=%s&spec=%s" % (
             bossID, wclass, spec)
 
         if is_heal:
@@ -164,7 +165,7 @@ def add_sheet(f, bossName, bossID, wclass, spec, is_heal=False):
         playerName = driver.find_elements_by_css_selector(
             "a[class*='main-table-link main-table-player']")
         itemLevel = driver.find_elements_by_css_selector("td[class*='ilvl-cell']")
-        itemLevel2 = driver.find_elements_by_xpath("//td[@class='ilvl-cell']")
+        #itemLevel2 = driver.find_elements_by_xpath("//td[@class='ilvl-cell']")
         DPS = driver.find_elements_by_css_selector(
             "td[class*='main-table-number primary players-table-dps']")
         Date = driver.find_elements_by_css_selector(
@@ -221,11 +222,11 @@ def add_sheet(f, bossName, bossID, wclass, spec, is_heal=False):
 
         i = 0
         idx = 0
-        existTalentID = 0
-
-        iconGroupCnt = (7 + 2 + 6)
         rowId = 0
         
+        sheet1.set_column(1, 1, 15)
+        sheet1.set_column(11, 11, 23)
+        sheet1.set_column(12, 12, 20)
         
         for pg in playerGear:
             icon_group = pg.find_elements_by_class_name("tiny_icon")
@@ -236,31 +237,40 @@ def add_sheet(f, bossName, bossID, wclass, spec, is_heal=False):
         for pg in playerGear:
             icon_group = pg.find_elements_by_class_name("tiny-icon")
             i = 0
-            while i <=15 and i < len(icon_group):
+            while i <=17 and i < len(icon_group):
                 pic_url = icon_group[i].get_attribute('src')
-                if not pic_map.get(pic_url):
-                    image_data = BytesIO(urlopen(pic_url).read())
-                    pic_map[pic_url] = image_data
-                    print("get file " + pic_url)
-                else:
-                    image_data = pic_map[pic_url]
+                try:
+                    if not pic_map.get(pic_url):
+                        image_data = BytesIO(urlopen(pic_url).read())
+                        pic_map[pic_url] = image_data
+                        print("get file " + pic_url)
+                    else:
+                        image_data = pic_map[pic_url]
 
-                if i <= 6:
-                    sheet1.insert_image(rowId+1, 11, pic_url, {'image_data': image_data, 'x_scale': 0.25,
-                                                            'y_scale': 0.25, 'x_offset': 19*i})
-                elif i <= 8:
-                    sheet1.insert_image(rowId+1, 13, pic_url, {'image_data': image_data, 'x_scale': 0.25,
-                                                            'y_scale': 0.25, 'x_offset': 19*(i-7)})
-                else:
-                    sheet1.insert_image(rowId+1, 12, pic_url, {'image_data': image_data, 'x_scale': 0.25,
-                                                            'y_scale': 0.25, 'x_offset': 19*(i-9)})
+                    if i <= 6:
+                        sheet1.insert_image(rowId+1, 11, pic_url, {'image_data': image_data, 'x_scale': 0.25,
+                                                                'y_scale': 0.25, 'x_offset': 19*i})
+                    elif i <= 8:
+                        sheet1.insert_image(rowId+1, 13, pic_url, {'image_data': image_data, 'x_scale': 0.25,
+                                                                'y_scale': 0.25, 'x_offset': 19*(i-7)})
+                    elif i <= 14:
+                        sheet1.insert_image(rowId+1, 12, pic_url, {'image_data': image_data, 'x_scale': 0.25,
+                                                                'y_scale': 0.25, 'x_offset': 19*(i-9)})
+                    else:
+                        sheet1.insert_image(rowId+1, 14, pic_url, {'image_data': image_data, 'x_scale': 0.25,
+                                                                'y_scale': 0.25, 'x_offset': 19*(i-15)})                       
+                except Exception,e:
+                    print(e)
+                    traceback.print_exc()
+                    
                 i+=1
             rowId += 1
             idx += 15
 
         # get player detail URL
         rowId = 0
-        chrome_options = Options()
+        #chrome_options = Options()
+        chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--ignore-certificate-errors')
         chrome_options.add_argument('--ignore-ssl-errors')
@@ -284,7 +294,7 @@ def add_sheet(f, bossName, bossID, wclass, spec, is_heal=False):
                         driverChrome.execute_script("window.scrollBy(0,750)")
                         xpath_str = "//a[text()='%s\n']" % (u.text)
 
-                        men_menu = WebDriverWait(driverChrome, 20).until(
+                        WebDriverWait(driverChrome, 20).until(
                             EC.presence_of_element_located((By.XPATH, xpath_str)))
                         # ActionChains(driver).move_to_element(men_menu).perform()
 
@@ -302,8 +312,7 @@ def add_sheet(f, bossName, bossID, wclass, spec, is_heal=False):
                         print(str(e))
                         traceback.print_exc()
 
-                    sxall = driverChrome.find_elements_by_xpath(
-                        "//span[@class='composition-entry']")
+                    sxall = driverChrome.find_elements_by_xpath("//span[@class='composition-entry']")
 
                     fsxText = ""
                     i = 0
@@ -339,16 +348,39 @@ def add_sheet(f, bossName, bossID, wclass, spec, is_heal=False):
                     sxText = attr_map[fullURL]
                     columId = 0
                     for s in sxText:
-                        sheet1.write(rowId+1, columId+6, s, set_style(f,
-                                                                    'Times New Roman', 220, False, 'center'))
+                        sheet1.write(rowId+1, columId+6, s, set_style(f,'Times New Roman', 220, False, 'center'))
                         columId += 1
 
+
+
+                """
+                try:
+                    tianfuTable = driverChrome.find_element_by_id('summary-talents-0')
+                    tianfuList = tianfuTable.find_elements_by_css_selector("img[class*='table-icon mCS_img_loaded']")
+                    if len(tianfuList) > 7:
+                        id = 7
+                        while id < len(tianfuList):
+                            picURL = tianfuList[id].get_attribute("src")
+                                    
+                            if not pic_map.get(picURL):
+                                image_data = BytesIO(urlopen(picURL).read())
+                                pic_map[picURL] = image_data
+
+                            else:
+                                image_data = pic_map[picURL]
+
+                            sheet1.insert_image(rowId+1, 14, picURL, {'image_data': image_data, 'x_scale': 0.25,'y_scale': 0.25, 'x_offset': 19*(id-7)})
+                            id += 1
+                except Exception,e:
+                    print(str(e))
+                    traceback.print_exc()   
+                """ 
                 #sheet1.write(rowId+1, 6, fsxText, set_style(f,'Times New Roman', 220, False, 'center'))
             rowId += 1
 
         # set colum  width
         sheet1.set_column(1, 1, 15)
-        sheet1.set_column(11, 11, 25)
+        sheet1.set_column(11, 11, 23)
         sheet1.set_column(12, 12, 20)
     except Exception,e:
         print(e)

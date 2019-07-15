@@ -22,18 +22,18 @@ DaSaluo_BossList = [
 
 YongHengWangGong_BossList=[
     
-    {"Name": "BOSS1", "ID": 2298},
+    {"Name": "指挥官", "ID": 2298},
     
-    {"Name": "BOSS2", "ID": 2305},
+    {"Name": "艾莎拉之辉", "ID": 2305},
     
-    {"Name": "BOSS3", "ID": 2289},
+    {"Name": "黑水巨鳗", "ID": 2289},
     
-    {"Name": "BOSS4", "ID": 2304},
+    {"Name": "女勋爵", "ID": 2304},
     
-    {"Name": "555", "ID": 2303},
+    {"Name": "奥戈左亚", "ID": 2303},
     
-    {"Name": "666", "ID": 2311},
-    {"Name": "777", "ID": 2239},
+    {"Name": "女王法庭", "ID": 2311},
+    {"Name": "扎库尔", "ID": 2293},
     {"Name": "女王", "ID": 2299}
 
 ]
