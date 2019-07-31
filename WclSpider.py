@@ -104,7 +104,7 @@ def main():
     print("is_hps=" + str(is_hps))
     
     try:
-        with open("attr_"+wow_spec+".txt" , "rb") as f_attr:
+        with open("attr_"+ wow_class +"_"+wow_spec+".txt" , "rb") as f_attr:
             attr_map = pickle.load(f_attr)
     except Exception, e:
         # traceback.print_exc()
@@ -247,6 +247,10 @@ def add_sheet(f, bossName, bossID, wclass, spec, is_heal=False):
                     else:
                         image_data = pic_map[pic_url]
 
+                    if image_data.getvalue()[:4] != '\xff\xd8\xff\xe0' and image_data.getvalue()[:4]!='\xff\xd8\xff\xe1': 
+                        i = i+1
+                        continue
+
                     if i <= 6:
                         sheet1.insert_image(rowId+1, 11, pic_url, {'image_data': image_data, 'x_scale': 0.25,
                                                                 'y_scale': 0.25, 'x_offset': 19*i})
@@ -387,7 +391,7 @@ def add_sheet(f, bossName, bossID, wclass, spec, is_heal=False):
         traceback.print_exc()
     
     try:
-        with open("attr_"+spec+".txt", "wb") as f_attr:
+        with open("attr_"+ wclass +"_" +spec+".txt", "wb") as f_attr:
             pickle.dump(attr_map, f_attr)
     except:
         pass
