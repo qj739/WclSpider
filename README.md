@@ -11,7 +11,7 @@ python 2.7
 phantomjs 或Chrome headless
 
 ## 使用方法
-python wcl_spider <class>  <spec>  <is_hps>
+python wcl_spider <'class'>  <'spec'>  <is_hps>
 
 参数1：class职业名,如：Druid，Paladin 
 
